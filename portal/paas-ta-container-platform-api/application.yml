@@ -1,0 +1,203 @@
+spring:
+  application:
+    name: paas-ta-container-platform-api
+  freemarker:
+    template-loader-path: classpath:/templates/
+ 
+jwt:
+  secret: ${JWT_SECRET_KEY}
+  expirationDateInMs: 3600000
+  refreshExpirationDateInMs: 3600000
+
+project:
+  name: paas-ta-container-platform-api
+  artifactId: paas-ta-container-platform-api
+  description: API of the Container Platform Projects
+ 
+management:
+  security:
+    enabled: false
+ 
+cpCluster:
+  name: cp-cluster
+
+cp:
+  provide-as-service: paas-ta-container-platform-service
+  provide-as-standalone: paas-ta-container-platform-standalone
+
+cpNamespace:
+  ignoreNamespace: kubernetes-dashboard, kube-node-lease, kube-public, kube-system, default, paas-ta-container-platform-temp-namespace
+  defaultNamespace: paas-ta-container-platform-temp-namespace
+  role:
+    list: paas-ta-container-platform-init-role, paas-ta-container-platform-admin-role
+    init: paas-ta-container-platform-init-role
+    admin: paas-ta-container-platform-admin-role
+  resourceQuotas:
+    list: paas-ta-container-platform-low-rq, paas-ta-container-platform-medium-rq, paas-ta-container-platform-high-rq
+    low: paas-ta-container-platform-low-rq
+    medium: paas-ta-container-platform-medium-rq
+    high: paas-ta-container-platform-high-rq
+  limitRanges:
+    list: paas-ta-container-platform-low-limit-range, paas-ta-container-platform-medium-limit-range, paas-ta-container-platform-high-limit-range
+    low: paas-ta-container-platform-low-limit-range
+    medium: paas-ta-container-platform-medium-limit-range
+    high: paas-ta-container-platform-high-limit-range
+ 
+cpAnnotations:
+  configuration: kubectl.kubernetes.io/, kubernetes.io/, k8s.io/
+ 
+cpResource:
+  clusterResource: Namespace, PersistentVolume, StorageClass, Role, ResourceQuota, LimitRange
+ 
+cpMaster:
+  name:
+  api:
+    url: https://${K8S_MASTER_IP}:${K8S_PORT}
+    list:
+      services:
+        list: "/api/v1/namespaces/{namespace}/services"
+        get: "/api/v1/namespaces/{namespace}/services/{name}"
+        create: "/api/v1/namespaces/{namespace}/services"
+        delete: "/api/v1/namespaces/{namespace}/services/{name}"
+        update: "/api/v1/namespaces/{namespace}/services/{name}"
+        listAllNamespaces: "/api/v1/services"
+      endpoints:
+        list: "/api/v1/namespaces/{namespace}/endpoints"
+        get: "/api/v1/namespaces/{namespace}/endpoints/{name}"
+        listAllNamespaces: "/api/v1/endpoints"
+      pods:
+        list: "/api/v1/namespaces/{namespace}/pods"
+        get: "/api/v1/namespaces/{namespace}/pods/{name}"
+        create: "/api/v1/namespaces/{namespace}/pods"
+        delete: "/api/v1/namespaces/{namespace}/pods/{name}"
+        update: "/api/v1/namespaces/{namespace}/pods/{name}"
+        listAllNamespaces: "/api/v1/pods"
+      nodes:
+        list: "/api/v1/nodes"
+        get: "/api/v1/nodes/{name}"
+      replicaSets:
+        list: "/apis/apps/v1/namespaces/{namespace}/replicasets"
+        get: "/apis/apps/v1/namespaces/{namespace}/replicasets/{name}"
+        create: "/apis/apps/v1/namespaces/{namespace}/replicasets"
+        delete: "/apis/apps/v1/namespaces/{namespace}/replicasets/{name}"
+        update: "/apis/apps/v1/namespaces/{namespace}/replicasets/{name}"
+        listAllNamespaces: "/apis/apps/v1/replicasets"
+      persistentVolumes:
+        list: "/api/v1/persistentvolumes"
+        get: "/api/v1/persistentvolumes/{name}"
+        create: "/api/v1/persistentvolumes"
+        delete: "/api/v1/persistentvolumes/{name}"
+        update: "/api/v1/persistentvolumes/{name}"
+        listAllNamespaces: "/api/v1/persistentvolumes"
+      persistentVolumeClaims:
+        list: "/api/v1/namespaces/{namespace}/persistentvolumeclaims"
+        get: "/api/v1/namespaces/{namespace}/persistentvolumeclaims/{name}"
+        create: "/api/v1/namespaces/{namespace}/persistentvolumeclaims"
+        delete: "/api/v1/namespaces/{namespace}/persistentvolumeclaims/{name}"
+        update: "/api/v1/namespaces/{namespace}/persistentvolumeclaims/{name}"
+        listAllNamespaces: "/api/v1/persistentvolumeclaims"
+      storageClasses:
+        list: "/apis/storage.k8s.io/v1/storageclasses"
+        get: "/apis/storage.k8s.io/v1/storageclasses/{name}"
+        create: "/apis/storage.k8s.io/v1/storageclasses"
+        delete: "/apis/storage.k8s.io/v1/storageclasses/{name}"
+        update: "/apis/storage.k8s.io/v1/storageclasses/{name}"
+      events:
+        list: "/api/v1/namespaces/{namespace}/events"
+        get: "/api/v1/namespaces/{namespace}/events/{name}"
+        listAllNamespaces: "/api/v1/events"
+      roles:
+        list: "/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/roles"
+        get: "/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/roles/{name}"
+        create: "/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/roles"
+        delete: "/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/roles/{name}"
+        update: "/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/roles/{name}"
+        listAllNamespaces: "/apis/rbac.authorization.k8s.io/v1/roles"
+      deployments:
+        list: "/apis/apps/v1/namespaces/{namespace}/deployments"
+        get: "/apis/apps/v1/namespaces/{namespace}/deployments/{name}"
+        create: "/apis/apps/v1/namespaces/{namespace}/deployments"
+        delete: "/apis/apps/v1/namespaces/{namespace}/deployments/{name}"
+        update: "/apis/apps/v1/namespaces/{namespace}/deployments/{name}"
+        listAllNamespaces: "/apis/apps/v1/deployments"
+      roleBindings:
+        list: "/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/rolebindings"
+        get: "/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/rolebindings/{name}"
+        create: "/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/rolebindings"
+        delete: "/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/rolebindings/{name}"
+        update: "/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/rolebindings/{name}"
+        listAllNamespaces: "/apis/rbac.authorization.k8s.io/v1/rolebindings"
+      users:
+        get: "/api/v1/namespaces/{namespace}/serviceaccounts/{name}"
+        create: "/api/v1/namespaces/{namespace}/serviceaccounts"
+        delete: "/api/v1/namespaces/{namespace}/serviceaccounts/{name}"
+        listAllNamespaces: "/api/v1/serviceaccounts"
+      namespaces:
+        list: "/api/v1/namespaces"
+        get: "/api/v1/namespaces/{namespace}"
+        create: "/api/v1/namespaces"
+        delete: "/api/v1/namespaces/{name}"
+        update: "/api/v1/namespaces/{name}"
+      resourceQuotas:
+        list: "/api/v1/namespaces/{namespace}/resourcequotas"
+        get: "/api/v1/namespaces/{namespace}/resourcequotas/{name}"
+        create: "/api/v1/namespaces/{namespace}/resourcequotas"
+        delete: "/api/v1/namespaces/{namespace}/resourcequotas/{name}"
+        update: "/api/v1/namespaces/{namespace}/resourcequotas/{name}"
+        listAllNamespaces: "/api/v1/resourcequotas"
+      secrets:
+        get: "/api/v1/namespaces/{namespace}/secrets/{name}"
+        create: "/api/v1/namespaces/{namespace}/secrets"
+      clusterRoleBindings:
+        create: "/apis/rbac.authorization.k8s.io/v1/clusterrolebindings"
+        delete: "/apis/rbac.authorization.k8s.io/v1/clusterrolebindings/{name}"
+      limitRanges:
+        list: "/api/v1/namespaces/{namespace}/limitranges"
+        get: "/api/v1/namespaces/{namespace}/limitranges/{name}"
+        create: "/api/v1/namespaces/{namespace}/limitranges"
+        delete: "/api/v1/namespaces/{namespace}/limitranges/{name}"
+        update: "/api/v1/namespaces/{namespace}/limitranges/{name}"
+        listAllNamespaces: "/api/v1/limitranges"
+ 
+---
+spring:
+  profiles: local    
+ 
+logging:
+  level:
+    ROOT: INFO
+  path: classpath:logback-spring.xml
+  file: logs/application.log
+ 
+server:
+  port: ${PORT:3333}
+  auth:
+    valid: N
+ 
+commonApi:
+  url: http://localhost:3334
+  authorization:
+    id: admin
+    password: PaaS-TA
+ 
+---
+spring:
+  profiles:     
+    active: prod
+ 
+logging:
+  level:
+    ROOT: INFO
+  path: classpath:logback-spring.xml
+  file: logs/application.log
+ 
+server:
+  port: ${PORT:3333}
+  auth:
+    valid: N
+ 
+commonApi:
+  url: ${CONTAINER_PLATFORM_COMMON_API_URI}
+  authorization:
+    id: admin
+    password: PaaS-TA

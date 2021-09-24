@@ -1,0 +1,73 @@
+server:
+  port: 8787
+
+spring:
+  application:
+    name: paas-ta-caas-jenkins-broker
+  security:
+    user:
+      name: admin
+      password: cloudfoundry
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mysql://${HAPROXY_IP}:${MARIADB_PORT}/broker?autoReconnect=true&useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Seoul&useLegacyDatetimeCode=false
+    username: ${MARIADB_USER_ID}
+    password: ${MARIADB_USER_PASSWORD}
+    validationQuery: SELECT 1
+  jpa:
+    database: mysql
+    hibernate:
+      ddl-auto: none
+      naming:
+        strategy: org.hibernate.cfg.EJB3NamingStrategy
+    generate-ddl: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLInnoDBDialect
+        show_sql: true
+        format_sql: true
+        use_sql_comments: true
+
+serviceDefinition:
+  id: 0ef99f90-0077-11ea-aaef-0800200c9a66
+  name: container-jenkins-service
+  desc: Installing Jenkins in Docker in a Container 20GB
+  bindable: false
+  planupdatable: false
+  bullet:
+    name: 100
+    desc: 100
+  plan1:
+    id: 1653cb80-0077-11ea-aaef-0800200c9a66
+    name: jenkins_20GB
+    desc: Installing Jenkins in Docker in a Container
+    type: A
+
+caas:
+  k8s_api_server_ip: https://${K8S_IP}
+  k8s_api_server_port: ${K8S_PORT}
+  k8s_auth_bearer: ${K8S_AUTH_BEARER}
+  dashboard_ip: http://${NODE_IP}
+
+jenkins:
+  deployment_file_path: "/tmp/jenkins_deployment.yml"
+  service_file_path: "/tmp/jenkins_service.yml"
+  namespace_file_path: "/tmp/create-namespace.yml"
+  namespace: "jenkins-namespace"
+  secret_file_path: "/tmp/docker-secret.yml"
+  username: "admin"
+  password: "admin"
+  docker_repository_url: ${HAPROXY_IP}:${REGISTRY_PORT}
+
+private:
+  docker:
+    registry:
+      auth:
+        id: admin
+        password: admin
+      uri: ${HAPROXY_IP}
+      port: ${REGISTRY_PORT}
+      image: paasta_jenkins
+      version: latest
+      secret:
+        name: paasta

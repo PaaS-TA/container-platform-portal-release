@@ -1,0 +1,97 @@
+spring:
+  application:
+    name: paas-ta-container-platform-webuser
+
+management:
+  security:
+    enabled: false
+
+cp:
+  cluster:
+    url: https://${K8S_MASTER_IP}:${K8S_PORT}
+    name: cp-cluster
+  namespace:
+    default: paas-ta-container-platform-temp-namespace
+  provider:
+    id: paas-ta-container-platform-standalone    # PaaS-TA 포탈 서비스 형태의 경우 'paas-ta-container-platform-service'로 설정
+    type:
+      service: paas-ta-container-platform-service
+      standalone: paas-ta-container-platform-standalone
+
+private:
+  registry:
+    imageName: registry
+
+keycloak:
+  oauth:
+    info:
+      uri: http://${KEYCLOAK_URI}/auth/realms/paas-ta-container-platform-realm/protocol/openid-connect/userinfo
+    token:
+      check:
+        uri: http://${KEYCLOAK_URI}/auth/realms/paas-ta-container-platform-realm/protocol/openid-connect/token/introspect
+      access:
+        uri: http://${KEYCLOAK_URI}/auth/realms/paas-ta-container-platform-realm/protocol/openid-connect/token
+    logout:
+      url: http://${KEYCLOAK_URI}/auth/realms/paas-ta-container-platform-realm/protocol/openid-connect/logout
+    authorization:
+      uri: http://${KEYCLOAK_URI}/auth/realms/paas-ta-container-platform-realm/protocol/openid-connect/auth
+    client:
+      id: ${KEYCLOAK_CLIENT_ID}
+      secret: ${KEYCLOAK_CLIENT_SECRET}
+      scope:
+      clusterAdminRole: paas-ta-container-platform-cluster-admin-role
+
+---
+spring:
+  profiles: local
+  freemarker:
+    template-loader-path: classpath:/templates/
+
+logging:
+  level:
+    ROOT: INFO
+  path: classpath:logback-spring.xml
+  file: logs/application.log
+
+server:
+  port: ${PORT:8091}
+
+cpApi:
+  url: http://localhost:3333
+  authorization:
+    id: admin
+    password: PaaS-TA
+
+commonApi:
+  url: http://localhost:3334
+  authorization:
+    id: admin
+    password: PaaS-TA
+
+---
+spring:
+  profiles:
+    active: prod
+  freemarker:
+    template-loader-path: classpath:/templates/
+
+logging:
+  level:
+    ROOT: INFO
+  path: classpath:logback-spring.xml
+  file: logs/application.log
+
+server:
+  port: ${PORT:8091}
+
+cpApi:
+  url: ${CONTAINER_PLATFORM_API_URI}
+  authorization:
+    id: admin
+    password: PaaS-TA
+
+commonApi:
+  url: ${CONTAINER_PLATFORM_COMMON_API_URI}
+  authorization:
+    id: admin
+    password: PaaS-TA
