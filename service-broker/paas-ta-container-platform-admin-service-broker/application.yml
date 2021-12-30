@@ -1,5 +1,5 @@
 server:
-  port: 3092
+  port: ${SERVER_PORT}
 
 auth:
   id: "admin"
@@ -7,12 +7,12 @@ auth:
 
 spring:
   application:
-    name: container-platform-admin-service-broker
+    name: container-platform-admin-portal-service-broker
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mysql://${HAPROXY_IP}:${MARIADB_PORT}/broker?autoReconnect=true&useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Seoul&useLegacyDatetimeCode=false
-    username: ${MARIADB_USER_ID}
-    password: ${MARIADB_USER_PASSWORD}
+    url: jdbc:mysql://${DATABASE_URL}/broker?autoReconnect=true&useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Seoul&useLegacyDatetimeCode=false
+    username: ${DATABASE_USER_ID}
+    password: ${DATABASE_USER_PASSWORD}
   jpa:
     hibernate.ddl-auto: none
     show-sql: true
@@ -22,8 +22,8 @@ spring:
 
 
 k8s:
-  url: https://${K8S_MASTER_IP}:${K8S_PORT}
-  auth_bearer_token: ${K8S_BEARER_TOKEN}
+  url: ${K8S_API_SERVER}
+  auth_bearer_token: ${K8S_AUTH_BEARER_TOKEN}
   cluster:
     command: "/var/vcap/jobs/container-service-broker/script/set_caas_service_info.sh"
     exit-code: 'caas_exit'
@@ -33,19 +33,19 @@ cp:
     url: ${CONTAINER_PLATFORM_ADMIN_PORTAL_URI}
   common-api:
     url: ${CONTAINER_PLATFORM_COMMON_API_URI}
-    id: ${COMMON_API_ID}
-    password: ${COMMON_API_PASSWORD}
+    id: admin
+    password: PaaS-TA
   api:
     url: ${CONTAINER_PLATFORM_API_URI}
   role:
     list: paas-ta-container-platform-init-role, paas-ta-container-platform-admin-role
     init: paas-ta-container-platform-init-role
     admin: paas-ta-container-platform-admin-role
-  provide-as-service: paas-ta-container-platform-service
+  provide-as-service: paas-ta-container-platform-portal-service
   broker:
     admin:
       id: 991f5d8b-ff6f-4f76-9832-253cdd2bd631-bee74
-      org: system
+      org: ${CONTAINER_PLATFORM_ADMIN_PORTAL_ORG}
     user:
       id: 15a96df5-ec33-4012-a5bf-0ee3459af383-186da
 
@@ -55,11 +55,11 @@ keycloak:
       grantType: password
       username: ${KEYCLOAK_ADMIN_USERNAME}
       password: ${KEYCLOAK_ADMIN_PASSWORD}
-      serverUrl: http://${KEYCLOAK_URI}/auth
+      serverUrl: ${KEYCLOAK_URI}/auth
       realm: master
       clientId: admin-cli
     cp:
-      realm: paas-ta-container-platform-realm
+      realm: ${KEYCLOAK_CP_REALM}
       IdentityProviderId: paas-ta-container-platform-saml-idp
       clusterAdminGroup: paas-ta-container-platform-cluster-admin
       clusterAdminRole: paas-ta-container-platform-cluster-admin-role
@@ -77,7 +77,7 @@ serviceDefinition:
   bindable: false
   desc: "For Container Service Plans, You can choose plan about CPU, Memory, disk."
   id: 991f5d8b-ff6f-4f76-9832-253cdd2bd631-bee74
-  name: container-platform-admin-service-broker
+  name: container-platform-admin-portal-service-broker
   plan1:
     desc: "2 CPUs, 2GB Memory (free)"
     id: f02690d6-6965-4756-820e-3858111ed674-e6f6
@@ -120,7 +120,7 @@ private:
       auth:
         id: admin
         password: cloudfoundry
-      uri: ${HAPROXY_IP}
+      uri: none
       port: 5001
       secret:
         name: paasta

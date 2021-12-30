@@ -3,30 +3,30 @@ spring:
     name: paas-ta-container-platform-api
   freemarker:
     template-loader-path: classpath:/templates/
- 
+
 jwt:
   secret: ${JWT_SECRET_KEY}
-  expirationDateInMs: 3600000
-  refreshExpirationDateInMs: 3600000
+  expirationDateInMs: 10800000
+  refreshExpirationDateInMs: 10800000
 
 project:
   name: paas-ta-container-platform-api
   artifactId: paas-ta-container-platform-api
   description: API of the Container Platform Projects
- 
+
 management:
   security:
     enabled: false
- 
+
 cpCluster:
   name: cp-cluster
 
 cp:
-  provide-as-service: paas-ta-container-platform-service
-  provide-as-standalone: paas-ta-container-platform-standalone
+  provide-as-service: paas-ta-container-platform-portal-service
+  provide-as-standalone: paas-ta-container-platform-portal-standalone
 
 cpNamespace:
-  ignoreNamespace: kubernetes-dashboard, kube-node-lease, kube-public, kube-system, default, paas-ta-container-platform-temp-namespace
+  ignoreNamespace: ${IGNORE_NAMESPACES}
   defaultNamespace: paas-ta-container-platform-temp-namespace
   role:
     list: paas-ta-container-platform-init-role, paas-ta-container-platform-admin-role
@@ -42,17 +42,17 @@ cpNamespace:
     low: paas-ta-container-platform-low-limit-range
     medium: paas-ta-container-platform-medium-limit-range
     high: paas-ta-container-platform-high-limit-range
- 
+
 cpAnnotations:
   configuration: kubectl.kubernetes.io/, kubernetes.io/, k8s.io/
- 
+
 cpResource:
   clusterResource: Namespace, PersistentVolume, StorageClass, Role, ResourceQuota, LimitRange
- 
+
 cpMaster:
   name:
   api:
-    url: https://${K8S_MASTER_IP}:${K8S_PORT}
+    url: ${K8S_API_SERVER}
     list:
       services:
         list: "/api/v1/namespaces/{namespace}/services"
@@ -158,44 +158,44 @@ cpMaster:
         delete: "/api/v1/namespaces/{namespace}/limitranges/{name}"
         update: "/api/v1/namespaces/{namespace}/limitranges/{name}"
         listAllNamespaces: "/api/v1/limitranges"
- 
+
 ---
 spring:
-  profiles: local    
- 
+  profiles: local
+
 logging:
   level:
     ROOT: INFO
   path: classpath:logback-spring.xml
   file: logs/application.log
- 
+
 server:
   port: ${PORT:3333}
   auth:
     valid: N
- 
+
 commonApi:
   url: http://localhost:3334
   authorization:
     id: admin
     password: PaaS-TA
- 
+
 ---
 spring:
-  profiles:     
+  profiles:
     active: prod
- 
+
 logging:
   level:
     ROOT: INFO
   path: classpath:logback-spring.xml
   file: logs/application.log
- 
+
 server:
-  port: ${PORT:3333}
+  port: ${SERVER_PORT}
   auth:
     valid: N
- 
+
 commonApi:
   url: ${CONTAINER_PLATFORM_COMMON_API_URI}
   authorization:

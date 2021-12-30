@@ -10,36 +10,36 @@ cp:
   clusterName: cp-cluster
 
 keycloak:
-  cpRealm: paas-ta-container-platform-realm
+  cpRealm: ${KEYCLOAK_CP_REALM}
   clusterAdminRole: paas-ta-container-platform-cluster-admin-role
 ---
 spring:
   profiles: local
   cp:
     datasource:
-      jdbc-url: jdbc:mysql://${HAPROXY_IP}:${MARIADB_PORT}/cp?autoReconnect=true&useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Seoul&useLegacyDatetimeCode=false
+      jdbc-url: jdbc:mysql://${DATABASE_URL}/cp?autoReconnect=true&useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Seoul&useLegacyDatetimeCode=false
       driver-class-name: org.mariadb.jdbc.Driver
       validationQuery: SELECT 1
-      username: ${MARIADB_USER_ID}
-      password: ${MARIADB_USER_PASSWORD}
+      username: ${DATABASE_USER_ID}
+      password: ${DATABASE_USER_PASSWORD}
   keycloak:
     datasource:
-      jdbc-url: jdbc:mysql://${HAPROXY_IP}:${MARIADB_PORT}/keycloak?autoReconnect=true&useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Seoul&useLegacyDatetimeCode=false
+      jdbc-url: jdbc:mysql://${DATABASE_URL}/${KEYCLOAK_DB_SCHEMA}?autoReconnect=true&useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Seoul&useLegacyDatetimeCode=false
       driver-class-name: org.mariadb.jdbc.Driver
       validationQuery: SELECT 1
-      username: ${MARIADB_USER_ID}
-      password: ${MARIADB_USER_PASSWORD}
+      username: ${DATABASE_USER_ID}
+      password: ${DATABASE_USER_PASSWORD}
   broker:
     datasource:
-      jdbc-url: jdbc:mysql://${HAPROXY_IP}:${MARIADB_PORT}/broker?autoReconnect=true&useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Seoul&useLegacyDatetimeCode=false
+      jdbc-url: jdbc:mysql://${DATABASE_URL}/broker?autoReconnect=true&useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Seoul&useLegacyDatetimeCode=false
       driver-class-name: org.mariadb.jdbc.Driver
       validationQuery: SELECT 1
-      username: ${MARIADB_USER_ID}
-      password: ${MARIADB_USER_PASSWORD}
+      username: ${DATABASE_USER_ID}
+      password: ${DATABASE_USER_PASSWORD}
   jpa:
     database: mysql
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
       show_sql: true
       naming:
         implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
@@ -56,7 +56,7 @@ logging:
   file: logs/application.log
 
 server:
-  port: 3334
+  port: ${PORT:3334}
 
 cpApi:
   url: http://localhost:3333
@@ -70,29 +70,29 @@ spring:
     active: prod
   cp:
     datasource:
-      jdbc-url: jdbc:mysql://${HAPROXY_IP}:${MARIADB_PORT}/cp?autoReconnect=true&useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Seoul&useLegacyDatetimeCode=false
+      jdbc-url: jdbc:mysql://${DATABASE_URL}/cp?autoReconnect=true&useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Seoul&useLegacyDatetimeCode=false
       driver-class-name: org.mariadb.jdbc.Driver
       validationQuery: SELECT 1
-      username: ${MARIADB_USER_ID}
-      password: ${MARIADB_USER_PASSWORD}
+      username: ${DATABASE_USER_ID}
+      password: ${DATABASE_USER_PASSWORD}
   keycloak:
     datasource:
-      jdbc-url: jdbc:mysql://${HAPROXY_IP}:${MARIADB_PORT}/keycloak?autoReconnect=true&useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Seoul&useLegacyDatetimeCode=false
+      jdbc-url: jdbc:mysql://${DATABASE_URL}/${KEYCLOAK_DB_SCHEMA}?autoReconnect=true&useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Seoul&useLegacyDatetimeCode=false
       driver-class-name: org.mariadb.jdbc.Driver
       validationQuery: SELECT 1
-      username: ${MARIADB_USER_ID}
-      password: ${MARIADB_USER_PASSWORD}
+      username: ${DATABASE_USER_ID}
+      password: ${DATABASE_USER_PASSWORD}
   broker:
     datasource:
-      jdbc-url: jdbc:mysql://${HAPROXY_IP}:${MARIADB_PORT}/broker?autoReconnect=true&useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Seoul&useLegacyDatetimeCode=false
+      jdbc-url: jdbc:mysql://${DATABASE_URL}/broker?autoReconnect=true&useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Seoul&useLegacyDatetimeCode=false
       driver-class-name: org.mariadb.jdbc.Driver
       validationQuery: SELECT 1
-      username: ${MARIADB_USER_ID}
-      password: ${MARIADB_USER_PASSWORD}
+      username: ${DATABASE_USER_ID}
+      password: ${DATABASE_USER_PASSWORD}
   jpa:
     database: mysql
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
       show_sql: true
       naming:
         implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
@@ -109,7 +109,7 @@ logging:
   file: logs/application.log
 
 server:
-  port: 3334
+  port: ${SERVER_PORT}
 
 cpApi:
   url: ${CONTAINER_PLATFORM_API_URI}

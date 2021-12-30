@@ -6,33 +6,26 @@ management:
   security:
     enabled: false
 
-cp:
-  cluster:
-    url: https://${K8S_MASTER_IP}:${K8S_PORT}
-    name: cp-cluster
-  namespace:
-    default: paas-ta-container-platform-temp-namespace
-
 private:
   registry:
-    imageName: registry
+    imageName: paas-ta-container-platform-harbor
 
 keycloak:
   oauth:
     info:
-      uri: http://${KEYCLOAK_URI}/auth/realms/paas-ta-container-platform-realm/protocol/openid-connect/userinfo
+      uri: ${KEYCLOAK_URI}/auth/realms/${KEYCLOAK_CP_REALM}/protocol/openid-connect/userinfo
     token:
       check:
-        uri: http://${KEYCLOAK_URI}/auth/realms/paas-ta-container-platform-realm/protocol/openid-connect/token/introspect
+        uri: ${KEYCLOAK_URI}/auth/realms/${KEYCLOAK_CP_REALM}/protocol/openid-connect/token/introspect
       access:
-        uri: http://${KEYCLOAK_URI}/auth/realms/paas-ta-container-platform-realm/protocol/openid-connect/token
+        uri: ${KEYCLOAK_URI}/auth/realms/${KEYCLOAK_CP_REALM}/protocol/openid-connect/token
     logout:
-      url: http://${KEYCLOAK_URI}/auth/realms/paas-ta-container-platform-realm/protocol/openid-connect/logout
+      url: ${KEYCLOAK_URI}/auth/realms/${KEYCLOAK_CP_REALM}/protocol/openid-connect/logout
     authorization:
-      uri: http://${KEYCLOAK_URI}/auth/realms/paas-ta-container-platform-realm/protocol/openid-connect/auth
+      uri: ${KEYCLOAK_URI}/auth/realms/${KEYCLOAK_CP_REALM}/protocol/openid-connect/auth
     client:
-      id: ${KEYCLOAK_CLIENT_ID}
-      secret: ${KEYCLOAK_CLIENT_SECRET}
+      id: ${KEYCLOAK_CP_CLIENT_ID}
+      secret: ${KEYCLOAK_CP_CLIENT_SECRET}
       scope:
       clusterAdminRole: paas-ta-container-platform-cluster-admin-role
 
@@ -77,7 +70,7 @@ logging:
   file: logs/application.log
 
 server:
-  port: ${PORT:8090}
+  port: ${SERVER_PORT}
 
 cpApi:
   url: ${CONTAINER_PLATFORM_API_URI}
