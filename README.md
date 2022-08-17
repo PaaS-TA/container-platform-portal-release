@@ -115,46 +115,29 @@ COPY application.yml /application.yml
 ENTRYPOINT ["java","-jar","-Dspring.config.location=application.yml","-Dspring.profiles.active=prod","/container-platform-api.jar"]
 ```
 - 이미지 생성
-  + {HAProxy_IP} : BOSH Inception에 배포된 Deployment <b>'paasta-container-platform'</b> 의 haproxy public ip 입력
+  + {K8s_MASTER_NODE_IP} : Cluster에 배포된 Private Image Repository 인 Harbor로 접속하기 위해 외부에서 Cluster에 통신할 수 있는 MasterNode의 IP로 지정한다.
 ```
-$ sudo docker build --tag {HAProxy_IP}:5001/container-platform/container-platform-api:latest .
+$ sudo docker build --tag {K8s_MASTER_NODE_IP}:30002/cp-portal-repository/container-platform-api:latest .
 ```
 - 이미지 생성 확인
 ```
-$ sudo docker images
+$ sudo podman images
 
 REPOSITORY                                                            TAG                 IMAGE ID            CREATED             SIZE
-xx.xxx.xxx.xx:5001/container-platform/container-platform-api          latest              45918a869bfd        38 seconds ago      140MB
+xx.xxx.xxx.xx:30002/cp-portal-repository/container-platform-api          latest              45918a869bfd        38 seconds ago      140MB
 ```
 
 <br>
 
 ### 컨테이너 플랫폼 이미지 Private Repository 업로드 방법
-> Docker를 기준으로 진행한다.
+> podman를 기준으로 진행한다.
 
-- Docker daemon.json 파일 내 insecure-registries 설정에 Private Repository Url 추가 후 Docker를 재시작한다.
+- 배포된 Private Repository인 Harbor에 로그인을 진행한다.
 ```
-$ sudo vi /etc/docker/daemon.json
-{
-        "insecure-registries": ["{HAProxy_IP}:5001"]
-}
-
-# docker restart
-$ sudo systemctl restart docker
-```
-
-- Bosh로 배포한 Private Repository에 로그인을 진행한다.
-```
-$ sudo docker login http://{HAProxy_IP}:5001 --username admin --password admin
+$ sudo podman login http://{K8s_MASTER_NODE_IP}:30002 --username admin --password Harbor12345
 ```
 
 - 로그인한 Private Repository에 컨테이너 플랫폼 이미지를 Push한다.
 ```
-$ sudo docker push {HAProxy_IP}:5001/container-platform/container-platform-api:latest
-```
-- Private Repository에 이미지가 정상적으로 업로드 되었는지 확인한다.
-```
-$ curl -H 'Authorization:Basic YWRtaW46YWRtaW4=' http://{HAProxy_IP}:5001/v2/_catalog
-
-{"repositories":["container-platform-api"]}
+$ sudo docker push {K8s_MASTER_NODE_IP}:30002/cp-portal-repository/container-platform-api:latest
 ```
